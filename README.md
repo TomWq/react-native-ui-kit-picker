@@ -32,10 +32,47 @@ yarn example
 ```
 
 ## 效果演示
- ![IOS时间选择器](./example/assets/ios.timer.png) &  ![Android时间选择器](./example/assets/android.timer.png)
- ![IOS城市选择器](./example/assets/ios.city.png) &  ![Android城市选择器](./example/assets/android.city.png)
- ![IOS普通选择器](./example/assets/ios.normal.png) &  ![Android普通选择器](./example/assets/android.normal.png)
- ![IOS二级联动选择器](./example/assets/ios-link.png) &  ![Android二级联动选择器](./example/assets/android-link.png)
+<div style="display: flex; flex-direction: row;">
+<div style="flex: 1;">
+<h2>iOS时间选择器</h2>
+<img src="./example/assets/ios.timer.png" alt="IOS时间选择器" width="200" height="350">
+</div>
+<div style="flex: 1;">
+<h2>Android时间选择器</h2>
+<img src="./example/assets/android.timer.png" alt="Android时间选择器" width="200" height="350">
+</div>
+</div>
+<div style="display: flex; flex-direction: row;">
+<div style="flex: 1;">
+<h2>IOS城市选择器</h2>
+<img src="./example/assets/ios.city.png" alt="IOS城市选择器" width="200" height="350">
+</div>
+<div style="flex: 1;">
+<h2>Android城市选择器</h2>
+<img src="./example/assets/android.city.png" alt="Android城市选择器" width="200" height="350">
+</div>
+</div>
+<div style="display: flex; flex-direction: row;">
+<div style="flex: 1;">
+<h2>iOS普通选择器</h2>
+<img src="./example/assets/ios.normal.png" alt="IOS普通选择器" width="200" height="350">
+</div>
+<div style="flex: 1;">
+<h2>Android普通选择器</h2>
+<img src="./example/assets/android.normal.png" alt="Android普通选择器" width="200" height="350">
+</div>
+</div>
+<div style="display: flex; flex-direction: row;">
+<div style="flex: 1;">
+<h2>iOS二级联动选择器</h2>
+<img src="./example/assets/ios-link.png" alt="IOS二级联动选择器" width="200" height="350">
+</div>
+<div style="flex: 1;">
+<h2>Android二级联动选择器</h2>
+<img src="./example/assets/android-link.png" alt="Android二级联动选择器" width="200" height="350">
+</div>
+</div>
+
 
 
 ## Usage
