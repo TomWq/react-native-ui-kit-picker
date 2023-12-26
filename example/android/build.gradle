@@ -8,7 +8,8 @@ buildscript {
         kotlinVersion = "1.8.0"
     }
     repositories {
-        google()
+
+      google()
         mavenCentral()
     }
     dependencies {
@@ -19,3 +20,6 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+
+

@@ -2,11 +2,41 @@
 
 Native selector for Android and ios
 
-## Installation
+## 功能介绍
+基于已有的第三方框架来实现Android和iOS的时间、城市、普通选择器,适用于 React Native App。
+
+### 原生框架依赖
+* Android：[Android-PickerView](https://github.com/Bigkoo/Android-PickerView)  - by [Bigkoo](https://github.com/Bigkoo/)
+* iOS：[BRPickerView](https://github.com/91renb/BRPickerView)  - by [91renb](https://github.com/91renb/)
+
+### 功能特点
+* 支持Android和iOS
+* 支持时间选择
+* 支持城市选择
+* 支持普通选择
+* 支持二级联动选择
+
+## 安装
 
 ```sh
 npm install react-native-ui-kit-picker
+or
+yarn add react-native-ui-kit-picker
 ```
+
+
+## Example
+
+```sh
+yarn example
+```
+
+## 效果演示
+ ![IOS时间选择器](./example/assets/ios.timer.png) &  ![Android时间选择器](./example/assets/android.timer.png)
+ ![IOS城市选择器](./example/assets/ios.city.png) &  ![Android城市选择器](./example/assets/android.city.png)
+ ![IOS普通选择器](./example/assets/ios.normal.png) &  ![Android普通选择器](./example/assets/android.normal.png)
+ ![IOS二级联动选择器](./example/assets/ios-link.png) &  ![Android二级联动选择器](./example/assets/android-link.png)
+
 
 ## Usage
 
@@ -121,13 +151,7 @@ export default function App() {
 }
 
 
-
 ```
-
-## Contributing
-
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
-
 ## License
 
 MIT
