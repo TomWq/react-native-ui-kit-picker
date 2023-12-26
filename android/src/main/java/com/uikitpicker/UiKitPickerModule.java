@@ -45,6 +45,9 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
   private final ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
   private final ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
 
+  private static int options1Index = 0;
+
+  private static int options2Index = 0;
 
   public UiKitPickerModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -58,10 +61,9 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
 
   //时间选择
   @ReactMethod
-  public void showTimePicker(final String pattern,final String title,final Promise promise) {
+  public void showTimePicker(final String pattern,final String title,final String mixDate, final String maxDate,final String selectDate, final Promise promise) {
     // 使用 getCurrentActivity() 获取当前 Activity
     final Activity activity = getCurrentActivity();
-
 
     if (activity == null) {
       promise.reject("ACTIVITY_NULL", "Current activity is null");
@@ -74,6 +76,33 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
       @Override
       public void run() {
 
+        Calendar selectedDate = Calendar.getInstance();
+        Calendar startDate = Calendar.getInstance();
+        Calendar endDate = Calendar.getInstance();
+
+        // 在try-catch块中解析日期字符串
+        try {
+          @SuppressLint("SimpleDateFormat")
+          SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+
+          // 如果 mixDate 为 null，则设置默认最小时间为 "1970-01-01"
+          startDate.setTime(Objects.requireNonNull(mixDate != null ? dateFormat.parse(mixDate) : dateFormat.parse("1970-01-01")));
+          // 如果 mixDate 为 null，则设置默认最小时间为当前日期
+
+          // 设置默认最大时间为今年最后一个月的最后一天
+          Calendar lastDayOfYear = Calendar.getInstance();
+          lastDayOfYear.set(Calendar.getInstance().get(Calendar.YEAR), Calendar.DECEMBER, 31);
+          endDate.setTime(maxDate != null ? Objects.requireNonNull(dateFormat.parse(maxDate)) : lastDayOfYear.getTime());
+          // 如果 selectDate 为 null，则设置默认选中时间为当前日期
+          selectedDate.setTime(selectDate != null && !selectDate.equals("") ? Objects.requireNonNull(dateFormat.parse(selectDate)) : new Date());
+        } catch (ParseException e) {
+          // 处理日期解析异常，可以打印日志或者进行其他适当的处理
+          e.printStackTrace();
+          promise.reject("DATE_PARSE_ERROR", "Error parsing date string");
+          return;
+        }
+
+
         TimePickerView timePickerView = new TimePickerBuilder(activity, new OnTimeSelectListener() {
 
           @SuppressLint("SimpleDateFormat")
@@ -83,7 +112,10 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
             format = new SimpleDateFormat(pattern);
             promise.resolve(format.format(date));
           }
-        }).setTitleText(title).build();
+        }).setTitleText(title)
+                .setRangDate(startDate, endDate)
+                .setDate(selectedDate)
+                .build();
         timePickerView.show();
       }
     });
@@ -91,7 +123,7 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
 
   //普通不联动选择器
   @ReactMethod
-  public void showNormalPicker(final ReadableArray data, final String title, final Promise promise) {
+  public void showNormalPicker(final ReadableArray data, final String title, final ReadableMap select, final Promise promise) {
 
     // 使用 getCurrentActivity() 获取当前 Activity
     final Activity activity = getCurrentActivity();
@@ -137,6 +169,19 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
           }
         }).setTitleText(title).build();
         optionsPickerView.setNPicker(options, null, null);
+
+        //如果select不为空,设置默认选中项 ,传入的select格式为{"label":"xxx","value":"xxx"}
+        if (select != null) {
+          String label = select.getString("label");
+          String value = select.getString("value");
+          for (int i = 0; i < options.size(); i++) {
+            if (options.get(i).equals(label) && optionsItems.get(i).get("value").equals(value)) {
+              optionsPickerView.setSelectOptions(i);
+              break;
+            }
+          }
+        }
+
         optionsPickerView.show();
       }
     });
@@ -144,7 +189,7 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
 
   //普通联动选择器
   @ReactMethod
-  public void showLinkagePicker(final String title, final ReadableArray data, final Promise promise) {
+  public void showLinkagePicker(final String title, final ReadableArray data, final ReadableMap select, final Promise promise) {
 
     // 使用 getCurrentActivity() 获取当前 Activity
     final Activity activity = getCurrentActivity();
@@ -187,6 +232,9 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
           optionsList2.add(cityList2);
         }
 
+
+
+
         OptionsPickerView optionsPickerView = new OptionsPickerBuilder(activity, new OnOptionsSelectListener() {
 
           @Override
@@ -209,7 +257,28 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
             promise.resolve(weakHashMap);
 
           }
-        }).setTitleText(title).build();
+        }).build();
+
+        if(title!=null){
+          optionsPickerView.setTitleText(title);
+        }else{
+          optionsPickerView.setTitleText("请选择");
+        }
+
+//        if(select != null){
+//          String label = select.getString("label");
+//          Log.i(TAG, "run: " + label);
+//          String value = select.getString("value");
+//          for (int i = 0; i < optionsItems1.size(); i++) {
+//            if (optionsItems1.get(i).getPickerViewText().equals(label)) {
+//              optionsPickerView.setSelectOptions(i);
+//              break;
+//            }
+//          }
+//        }
+
+
+
         optionsPickerView.setPicker(optionsItems1, optionsItems2);
         optionsPickerView.show();
       }
@@ -219,7 +288,7 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
 
   //选择城市
   @ReactMethod
-  public void showCityPicker(final Promise promise) {
+  public void showCityPicker(final String title, final ReadableMap select, final Promise promise) {
 
     // 使用 getCurrentActivity() 获取当前 Activity
     final Activity activity = getCurrentActivity();
@@ -234,6 +303,26 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
       @Override
       public void run() {
         initJsonData();
+
+        Log.d("Debug", "select: " + select);
+
+        int options1Index = 0;
+        int options2Index = 0;
+        int options3Index = 0;
+
+        if(select != null){
+           //如果传入的province,city,area不为空
+          if(select.hasKey("province") && !select.getString("province").isEmpty()){
+            options1Index = findIndex(options1Items, new JsonBean(select.getString("province")));
+          }
+          if(options1Index >= 0 && select.hasKey("city") && !select.getString("city").isEmpty()){
+            options2Index = options2Items.get(options1Index).indexOf(select.getString("city"));
+          }
+          if(options1Index >= 0 && options2Index >= 0 && select.hasKey("area") && !select.getString("area").isEmpty()){
+            options3Index = options3Items.get(options1Index).get(options2Index).indexOf(select.getString("area"));
+          }
+        }
+
         OptionsPickerView pvOptions = new OptionsPickerBuilder(activity, new OnOptionsSelectListener() {
           @Override
           public void onOptionsSelect(int options1, int options2, int options3, View v) {
@@ -258,16 +347,34 @@ public class UiKitPickerModule extends ReactContextBaseJavaModule {
             promise.resolve(weakHashMap);
           }
         })
-
-                .setTitleText("城市选择")
+                .setSelectOptions(0, 0, 0)
                 .build();
-
+        if(title != null){
+          pvOptions.setTitleText(title);
+        }else{
+          pvOptions.setTitleText("城市选择");
+        }
         pvOptions.setPicker(options1Items, options2Items, options3Items);//三级选择器
+
+        if(select != null){
+          pvOptions.setSelectOptions(options1Index, options2Index, options3Index);
+        }
         pvOptions.show();
 
       }
     });
   }
+
+  public static int findIndex(List<JsonBean> list, JsonBean target) {
+    for (int i = 0; i < list.size(); i++) {
+      if (list.get(i).getName().equals(target.getName())) {
+        Log.i(TAG, "findIndex: " + i);
+        return i;
+      }
+    }
+    return -1;
+  }
+
 
   //解析数据
   private void initJsonData() {
