@@ -1,6 +1,6 @@
 {
   "name": "react-native-ui-kit-picker",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Native selector for Android and ios",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
